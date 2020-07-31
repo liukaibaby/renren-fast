@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.penfen.dao.TPfHomeUserDao">
+
+    <resultMap id="tPfAgentUserMap" type="io.renren.modules.sys.entity.SysUserEntity">
+        <id property="userId" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="salt" column="salt"/>
+        <result property="email" column="email"/>
+        <result property="mobile" column="mobile"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="subAgent" column="sub_agent"/>
+        <result property="subUser" column="sub_user"/>
+        <result property="schemeId" column="scheme_id"/>
+        <result property="createUserId" column="create_user_id"/>
+        <association property="pfAgentUser" javaType="io.renren.modules.penfen.entity.TPfAgentUserEntity">
+            <id property="id" column="id"/>
+            <result property="epName" column="ep_name"/>
+            <result property="contact" column="contact"/>
+            <result property="qqNumber" column="qq_number"/>
+            <result property="moneyStatus" column="money_status"/>
+            <result property="oemStatus" column="oem_status"/>
+            <result property="agentStatus" column="agent_status"/>
+            <result property="agentGrade" column="agent_grade"/>
+            <result property="name" column="name"/>
+            <result property="echarge" column="echarge"/>
+            <result property="upEcharge" column="up_echarge"/>
+            <result property="upAgentId" column="up_id"/>
+            <result property="productName" column="product_name"/>
+            <result property="capacity" column="capacity"/>
+            <result property="videoRelease" column="video_release"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="mapResult" type="io.renren.modules.penfen.entity.TPfRechargeRecordEntity">
+        <result property="recharge" column="recharge"/>
+        <result property="refund" column="refund"/>
+        <result property="currentDate" column="currentDate"/>
+    </resultMap>
+
+
+    <!-- 首页获取代理商用户 -->
+    <select id="initGetUser" resultMap="tPfAgentUserMap" parameterType="Long">
+        select *,
+        (select COUNT(*) from t_pf_agent_user as t2 where t2.create_agent_id = u.user_id and t2.agent_grade = 2 GROUP
+        BY t2.create_agent_id) as sub_agent,
+        (select COUNT(*) from t_pf_agent_user as t2 where t2.create_agent_id = u.user_id and t2.agent_grade = 3 GROUP
+        BY t2.create_agent_id) as sub_user,
+        (select GROUP_CONCAT(t2.name SEPARATOR ',') as product_name from t_pf_agent_product as t1 left join t_pf_product
+        as t2 on t1.product_id = t2.id where t.id = t1.agent_id) as product_name
+        from t_pf_agent_user as t left join sys_user as u on u.agent_id = t.id
+        where u.user_id = #{userId}
+    </select>
+
+    <!-- 首页获取代理商用户 -->
+    <select id="initChartLine" resultMap="mapResult" parameterType="Long">
+        select sum((case when 0 >= echarge THEN echarge else 0 END)) as refund,sum((case when echarge>=0 THEN echarge
+        else 0 END)) as recharge , DATE_FORMAT(create_time, '%Y-%m') as currentDate
+        from t_pf_recharge_log
+        <if test="user_id != null and user_id != ''">
+            where user_id = #{userId}
+        </if>
+        GROUP BY currentDate
+    </select>
+
+</mapper>

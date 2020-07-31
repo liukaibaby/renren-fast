@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.penfen.dao.TPfRechargeLogDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.penfen.entity.TPfRechargeLogEntity" id="tPfRechargeLogMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="epName" column="ep_name"/>
+        <result property="echarge" column="echarge"/>
+        <result property="refund" column="refund"/>
+        <result property="agentId" column="agent_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="contact" column="contact"/>
+        <result property="openProduct" column="open_product"/>
+        <result property="explai" column="explai"/>
+    </resultMap>
+
+
+</mapper>

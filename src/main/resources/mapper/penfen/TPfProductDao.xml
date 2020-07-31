@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.penfen.dao.TPfProductDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.penfen.entity.TPfProductEntity" id="tPfProductMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+
+    <select id="getProduct" resultMap="tPfProductMap" parameterType="Long">
+        select p.id,p.name from t_pf_product as p left join t_pf_agent_product as a ON a.product_id = p.id
+        <if test="Id!=null and Id!=''">
+            where a.agent_id = #{Id}
+        </if>
+
+    </select>
+
+    <select id="getProductPackage" resultType="io.renren.modules.penfen.entity.TPfProductPackageEntity"
+            parameterType="Long">
+        select * from t_pf_product_package where product_id = #{pId}
+    </select>
+
+    <select id="getPackageDetails" resultType="io.renren.modules.penfen.entity.TPfProductDetailsEntity"
+            parameterType="Long">
+        select * from t_pf_product_details where p_id = #{pId}
+    </select>
+
+
+</mapper>
